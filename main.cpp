@@ -11,7 +11,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam)
     }
     return DefWindowProc(hwnd, message, wparam, lparam);
 }
-
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
     WNDCLASS wndclass;
@@ -22,15 +21,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
     wndclass.lpszClassName = L"window";
     RegisterClass(&wndclass);
-
     RECT rect = {0, 0, 200, 200};
     AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, 0);
-
     HWND window = CreateWindow(L"window", L"title",
                                WS_OVERLAPPED | WS_SYSMENU | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT,
                                rect.right - rect.left, rect.bottom - rect.top,
                                NULL, NULL, NULL, NULL);
-
     MSG msg;
     int ret;
     for (;;)
@@ -40,6 +36,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
             break;
         DispatchMessage(&msg);
     }
-
     return 0;
 }
