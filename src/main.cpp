@@ -25,6 +25,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
       HWND Ehwnd = CreateWindow(L"Button", L"結束",
                                 WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 205, 260,
                                 50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
+      EnableWindow(GetDlgItem(hwnd, IDB_PAUSE), false);
       return 0;
     }
     case WM_CLOSE: {
@@ -38,6 +39,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
     case WM_COMMAND: {
       switch (LOWORD(wparam)) {
         case IDB_START: {
+          EnableWindow(GetDlgItem(hwnd, IDB_START), false);
+          EnableWindow(GetDlgItem(hwnd, IDB_PAUSE), true);
           Click = true;
           if (!ClickFlag) {
             thread ClickerThread(Clicker);
@@ -47,6 +50,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
           return 0;
         }
         case IDB_PAUSE: {
+          EnableWindow(GetDlgItem(hwnd, IDB_PAUSE), false);
+          EnableWindow(GetDlgItem(hwnd, IDB_START), true);
           Click = false;
           return 0;
         }
