@@ -6,11 +6,11 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <thread>
 using namespace std;
-void CheckStart(bool* ClickStart);
-void CheckEnd(bool* ClickEnd);
 void Clicker();
 bool Click = false;
+bool ClickFlag = false;
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
                          LPARAM lparam) {
   switch (message) {
@@ -33,15 +33,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
     }
     case WM_COMMAND: {
       switch (LOWORD(wparam)) {
-        case IDB_START:
+        case IDB_START: {
           Click = true;
+          if (!ClickFlag) {
+            thread ClickerThread(Clicker);
+            ClickerThread.detach();
+          }
+          ClickFlag = true;
           return 0;
-        case IDB_PAUSE:
+        }
+        case IDB_PAUSE: {
           Click = false;
           return 0;
-        case IDB_END:
+        }
+        case IDB_END: {
           PostQuitMessage(0);
           return 0;
+        }
         default:
           return 0;
       }
@@ -74,24 +82,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   while (GetMessage(&msg, NULL, 0, 0)) {
     TranslateMessage(&msg);
     DispatchMessage(&msg);
-    if (Click) Clicker();
   }
   return msg.wParam;
 }
-void CheckStart(bool* ClickStart) {
-  if ((GetKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(VK_F2) & 0x8000))
-    *ClickStart = true;
-}
-void CheckEnd(bool* ClickEnd) {
-  if ((GetKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(VK_F3) & 0x8000))
-    *ClickEnd = false;
-}
 void Clicker() {
-  INPUT input[3];
-  input[1].type = INPUT_MOUSE;
-  input[1].mi.dwFlags = MOUSEEVENTF_LEFTDOWN;
-  input[2].type = INPUT_MOUSE;
-  input[2].mi.dwFlags = MOUSEEVENTF_LEFTUP;
-  SendInput(_countof(input), input, sizeof(INPUT));
-  // mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
+  enum sendInputs { MOUSE_CLICK, NUM_INPUTS };
+  INPUT inputs[NUM_INPUTS];
+  inputs[MOUSE_CLICK].type = INPUT_MOUSE;
+  inputs[MOUSE_CLICK].mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
+  while (Click && ClickFlag) SendInput(NUM_INPUTS, inputs, sizeof(inputs));
+  ClickFlag = false;
 }
