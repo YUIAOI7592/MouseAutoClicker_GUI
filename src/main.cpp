@@ -3,6 +3,7 @@
 #define IDB_PAUSE 3302
 #define IDB_END 3303
 #include <windows.h>
+#include <windowsx.h>
 
 #include <cstdlib>
 #include <iostream>
@@ -15,12 +16,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
                          LPARAM lparam) {
   switch (message) {
     case WM_CREATE: {
-      CreateWindow(L"Button", L"開始", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-                   45, 260, 50, 30, hwnd, (HMENU)IDB_START, NULL, NULL);
-      CreateWindow(L"Button", L"暫停", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-                   125, 260, 50, 30, hwnd, (HMENU)IDB_PAUSE, NULL, NULL);
-      CreateWindow(L"Button", L"結束", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-                   205, 260, 50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
+      HWND Shwnd = CreateWindow(L"Button", L"開始",
+                                WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 45, 260,
+                                50, 30, hwnd, (HMENU)IDB_START, NULL, NULL);
+      HWND Phwnd = CreateWindow(L"Button", L"暫停",
+                                WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 125, 260,
+                                50, 30, hwnd, (HMENU)IDB_PAUSE, NULL, NULL);
+      HWND Ehwnd = CreateWindow(L"Button", L"結束",
+                                WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 205, 260,
+                                50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
       return 0;
     }
     case WM_CLOSE: {
@@ -90,6 +94,10 @@ void Clicker() {
   INPUT inputs[NUM_INPUTS];
   inputs[MOUSE_CLICK].type = INPUT_MOUSE;
   inputs[MOUSE_CLICK].mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
-  while (Click && ClickFlag) SendInput(NUM_INPUTS, inputs, sizeof(inputs));
+  while (Click && ClickFlag) {
+    SendInput(NUM_INPUTS, inputs, sizeof(inputs));
+    Sleep(1);
+  }
+  Click = false;
   ClickFlag = false;
 }
