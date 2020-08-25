@@ -1,6 +1,0 @@
-cmake_minimum_required ( VERSION 3.0)
-project(MouseAutoClicker)
-set(SRC_LIST main.cpp)
-set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-std=c++20 -lstdc++ -luser32 -mwindows -O3 -DNDEBUG")
-add_executable(MouseAutoClicker ${SRC_LIST})
