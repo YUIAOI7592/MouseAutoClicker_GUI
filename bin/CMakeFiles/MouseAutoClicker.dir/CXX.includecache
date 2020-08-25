@@ -9,4 +9,8 @@
 C:/Users/qwe15/Documents/GitHub/MouseAutoClicker_GUI/src/main.cpp
 windows.h
 -
+cstdlib
+-
+iostream
+-
 
