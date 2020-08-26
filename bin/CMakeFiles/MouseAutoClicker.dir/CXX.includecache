@@ -17,6 +17,8 @@ cstdlib
 -
 iostream
 -
+string
+-
 thread
 -
 
