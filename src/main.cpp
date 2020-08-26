@@ -2,16 +2,20 @@
 #define IDB_START 3301
 #define IDB_PAUSE 3302
 #define IDB_END 3303
+#define GETKEY_TIMER 1
 #include <windows.h>
 #include <windowsx.h>
 
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <thread>
 using namespace std;
 void Clicker();
+void TimerProc(HWND hwnd, UINT nmsg, UINT ntimerid, DWORD dwtime);
 bool Click = false;
 bool ClickFlag = false;
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
                          LPARAM lparam) {
   switch (message) {
@@ -26,6 +30,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
                                 WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON, 205, 260,
                                 50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
       EnableWindow(GetDlgItem(hwnd, IDB_PAUSE), false);
+      SetTimer(hwnd, GETKEY_TIMER, 100, NULL);
       return 0;
     }
     case WM_CLOSE: {
@@ -33,6 +38,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
       return 0;
     }
     case WM_DESTROY: {
+      KillTimer(hwnd, GETKEY_TIMER);
       PostQuitMessage(0);
       return 0;
     }
@@ -53,12 +59,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
           EnableWindow(GetDlgItem(hwnd, IDB_PAUSE), false);
           EnableWindow(GetDlgItem(hwnd, IDB_START), true);
           Click = false;
+          ClickFlag = false;
           return 0;
         }
         case IDB_END: {
-          PostQuitMessage(0);
+          DestroyWindow(hwnd);
           return 0;
         }
+
         default:
           return 0;
       }
@@ -66,6 +74,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
       return 0;
     default: {
       return DefWindowProc(hwnd, message, wparam, lparam);
+    }
+    case WM_TIMER: {
+      if (GetAsyncKeyState(VK_CONTROL) & 0x8000 &&
+          GetAsyncKeyState(VK_F1) & 0x8000) {
+        SendMessage(hwnd, WM_COMMAND, IDB_START, 0);
+      }
+      if (GetAsyncKeyState(VK_CONTROL) & 0x8000 &&
+          GetAsyncKeyState(VK_F2) & 0x8000) {
+        SendMessage(hwnd, WM_COMMAND, IDB_PAUSE, 0);
+      }
+      if (GetAsyncKeyState(VK_CONTROL) & 0x8000 &&
+          GetAsyncKeyState(VK_F3) & 0x8000) {
+        SendMessage(hwnd, WM_COMMAND, IDB_END, 0);
+      }
     }
   }
   return 0;
@@ -101,7 +123,7 @@ void Clicker() {
   inputs[MOUSE_CLICK].mi.dwFlags = MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP;
   while (Click && ClickFlag) {
     SendInput(NUM_INPUTS, inputs, sizeof(inputs));
-    Sleep(1);
+    this_thread::sleep_for(chrono::milliseconds(1));
   }
   Click = false;
   ClickFlag = false;
