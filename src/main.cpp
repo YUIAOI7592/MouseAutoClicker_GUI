@@ -2,8 +2,12 @@
 #define IDB_START 3301
 #define IDB_PAUSE 3302
 #define IDB_END 3303
-#define IDB_HOTKEY1 3304
-#define IDB_HOTKEY2 3305
+#define IDB_HOTKEYSTART1 3304
+#define IDB_HOTKEYSTART2 3305
+#define IDB_HOTKEYPAUSE1 3306
+#define IDB_HOTKEYPAUSE2 3307
+#define IDB_HOTKEYEND1 3308
+#define IDB_HOTKEYEND2 3309
 #define GETKEY_TIMER 1
 #include <windows.h>
 #include <windowsx.h>
@@ -23,31 +27,73 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
                          LPARAM lparam) {
   switch (message) {
     case WM_CREATE: {
+      int n = 0;
       CreateWindow(L"Button", L"開始", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-                   45, 260, 50, 30, hwnd, (HMENU)IDB_START, NULL, NULL);
+                   45, 160, 50, 30, hwnd, (HMENU)IDB_START, NULL, NULL);
       CreateWindow(L"Button", L"暫停",
                    WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | WS_DISABLED, 125,
-                   260, 50, 30, hwnd, (HMENU)IDB_PAUSE, NULL, NULL);
+                   160, 50, 30, hwnd, (HMENU)IDB_PAUSE, NULL, NULL);
       CreateWindow(L"Button", L"結束", WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
-                   205, 260, 50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
-      HWND HotKey1 =
-          CreateWindow(L"COMBOBOX", L"IDB_HOTKEY1",
-                       WS_VISIBLE | CBS_DROPDOWNLIST | WS_CHILD | WS_VSCROLL,
-                       10, 10, 100, 200, hwnd, (HMENU)IDB_HOTKEY1, NULL, NULL);
-      int n = 0;
-      n = ComboBox_AddString(HotKey1, TEXT("Ctrl"));
-      ComboBox_SetItemData(HotKey1, n, VK_CONTROL);
-      n = ComboBox_AddString(HotKey1, TEXT("Alt"));
-      ComboBox_SetItemData(HotKey1, n, VK_MENU);
-      n = ComboBox_AddString(HotKey1, TEXT("Shift"));
-      ComboBox_SetItemData(HotKey1, n, VK_SHIFT);
-      ComboBox_SetCurSel(HotKey1, 0);
-      HWND HotKey2 =
-          CreateWindow(L"COMBOBOX", L"IDB_HOTKEY2",
-                       WS_VISIBLE | CBS_DROPDOWNLIST | WS_CHILD | WS_VSCROLL,
-                       120, 10, 100, 200, hwnd, (HMENU)IDB_HOTKEY2, NULL, NULL);
+                   205, 160, 50, 30, hwnd, (HMENU)IDB_END, NULL, NULL);
+      HWND HOTKEYSTART1 = CreateWindow(
+          L"COMBOBOX", L"IDB_HOTKEYSTART1",
+          WS_VISIBLE | CBS_DROPDOWNLIST | WS_CHILD | WS_VSCROLL, 140, 10, 60,
+          80, hwnd, (HMENU)IDB_HOTKEYSTART1, NULL, NULL);
+      n = ComboBox_AddString(HOTKEYSTART1, TEXT("Ctrl"));
+      ComboBox_SetItemData(HOTKEYSTART1, n, VK_CONTROL);
+      n = ComboBox_AddString(HOTKEYSTART1, TEXT("Alt"));
+      ComboBox_SetItemData(HOTKEYSTART1, n, VK_MENU);
+      n = ComboBox_AddString(HOTKEYSTART1, TEXT("Shift"));
+      ComboBox_SetItemData(HOTKEYSTART1, n, VK_SHIFT);
+      ComboBox_SetCurSel(HOTKEYSTART1, 0);
+
+      HWND HOTKEYSTART2 = CreateWindow(
+          L"COMBOBOX", L"IDB_HOTKEYSTART2",
+          WS_VISIBLE | CBS_DROPDOWNLIST | WS_CHILD | WS_VSCROLL, 230, 10, 60,
+          260, hwnd, (HMENU)IDB_HOTKEYSTART2, NULL, NULL);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F1"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F1);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F2"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F2);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F3"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F3);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F4"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F4);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F5"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F5);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F6"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F6);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F7"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F7);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F8"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F8);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F9"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F9);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F10"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F10);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F11"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F11);
+      n = ComboBox_AddString(HOTKEYSTART2, TEXT("F12"));
+      ComboBox_SetItemData(HOTKEYSTART2, n, VK_F12);
+      ComboBox_SetCurSel(HOTKEYSTART2, 0);
 
       SetTimer(hwnd, GETKEY_TIMER, 100, NULL);
+      return 0;
+    }
+    case WM_PAINT: {
+      PAINTSTRUCT ps;
+      HDC hdc = BeginPaint(hwnd, &ps);
+      SetBkMode(hdc, TRANSPARENT);
+      ExtTextOut(hdc, 10, 14, ETO_OPAQUE, NULL, L"開始快捷鍵設置：",
+                 lstrlen(L"開始快捷鍵設置："), NULL);
+      ExtTextOut(hdc, 207, 14, ETO_OPAQUE, NULL, L"＋", lstrlen(L"＋"), NULL);
+      ExtTextOut(hdc, 10, 44, ETO_OPAQUE, NULL, L"暫停快捷鍵設置：",
+                 lstrlen(L"暫停快捷鍵設置："), NULL);
+      ExtTextOut(hdc, 207, 44, ETO_OPAQUE, NULL, L"＋", lstrlen(L"＋"), NULL);
+      ExtTextOut(hdc, 10, 74, ETO_OPAQUE, NULL, L"結束快捷鍵設置：",
+                 lstrlen(L"結束快捷鍵設置："), NULL);
+      ExtTextOut(hdc, 207, 74, ETO_OPAQUE, NULL, L"＋", lstrlen(L"＋"), NULL);
+      EndPaint(hwnd, &ps);
       return 0;
     }
     case WM_CLOSE: {
@@ -64,7 +110,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
         case CBN_SELCHANGE: {
           SetFocus(hwnd);
           switch (LOWORD(wparam)) {
-            case IDB_HOTKEY1: {
+            case IDB_HOTKEYSTART1: {
               switch (ComboBox_GetItemData((HWND)lparam,
                                            ComboBox_GetCurSel((HWND)lparam))) {
                 case VK_CONTROL: {
@@ -154,7 +200,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
   wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
   wndclass.lpszClassName = L"window";
   RegisterClass(&wndclass);
-  RECT rect = {0, 0, 300, 300};
+  RECT rect = {0, 0, 300, 200};
   AdjustWindowRect(&rect, WS_CAPTION | WS_SYSMENU | WS_VISIBLE, 0);
   HWND window =
       CreateWindow(L"window", L"滑鼠連點器",
