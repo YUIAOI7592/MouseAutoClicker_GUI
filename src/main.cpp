@@ -62,6 +62,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
     case WM_COMMAND: {
       switch (HIWORD(wparam)) {
         case CBN_SELCHANGE: {
+          SetFocus(hwnd);
           switch (LOWORD(wparam)) {
             case IDB_HOTKEY1: {
               switch (ComboBox_GetItemData((HWND)lparam,
@@ -89,6 +90,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wparam,
           return 0;
         }
         case BN_CLICKED: {
+          SetFocus(hwnd);
           switch (LOWORD(wparam)) {
             case IDB_START: {
               Button_Enable(GetDlgItem(hwnd, IDB_START), false);
